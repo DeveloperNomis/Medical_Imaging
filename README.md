@@ -84,6 +84,9 @@ Then you can just drag and drop the dataset into the correct folder (for example
 
 ## 4. Change paths in inference-script 
 
+You have to change 3 main paths: One for the model, one for the data and one for the output of the results.
+For the model path you have to change the following lines:
+
 
 - Create a SFTP session for transfering the data to your cluster node.
 - Access token for Hugging face --> Clone Pixtral-12b model
