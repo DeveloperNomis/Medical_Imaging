@@ -88,7 +88,7 @@ alex_med-prompt
 -->   question-answers.json
 
 ## 4. Change paths in inference-script 
-Go to your inference script, with which you want to run the model. It should be in mirp_benchmark/inference_scripts/
+Go to your inference script, with which you want to run the model. It should be in mirp_benchmark/inference_scripts/ (You can open any script with the MobaTextEditor). Just make sure to change the format to unix: Format in the above bar --> Unix and if necessary the Encoding to UTF-8 if you use umlauts in comments or something similar (Encoding in the above bar --> UTF-8 (default))
 Here it is done with the all_experiments_mistral.py and the above described dataset-structure (in section Data & Directory Layout). 
 You have to change 3 main paths: One for the model, one for the data and one for the output of the results (according to your file structure) if you use the same file stucture for the data (Otherwise you have to further adjust the script, the original script uses 3 subfolders for example).
 You have to change the following lines:
@@ -519,8 +519,27 @@ python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral.py" \
        --batch_size 4
 ```
 
+If you want to use a different device, you can check the available devices with the following command in the terminal in your workspace:
+- scontrol show partition
+This command lists the devices available for jobs you run (with the above slurm script) when running inference for the model.
+But you have to be careful, for different devices, not only the line with "--partition" changes, but you have to adjust some other lines accordingly.
 
+To finally run the slurm script, type in the following command:
+- sbatch run_pixtral_mirp.sh
+You can then list all running jobs and their ids:
+- squeue -u $(whoami)
+And also cancel a running job:
+- scancel 1234567 (Of course you have to change the number to the specific job id you want to cancel)
 
+This setup runs the inference script for the pixtral model and a specific dataset on the bw uni cluster.
+Just be careful that all paths exist that you refer to, then this setup should be working fine.
+And remember, that you need to extend the time for the workspace if you need it longer, for example:
+- ws resize pixtral --lifetime 30 (extends the workspace time for 30 days)
+You can also check the remaining time with:
+- ws info pixtral
+If you want to have the results from your pixtral model permanently, you can copy them into your home directory:
+- cp -r "$WS_MODEL/pixtral-12b/results" "$HOME/pixtral_results"
+Of course, the directory pixtral_results has to exist in your home-directory.
 
 ## 6. Automation of environment activation and variables
 
@@ -557,15 +576,3 @@ fi
 
 Of course, the paths need to changed accordingly to your paths. Save the file and exit.
 Now, every time you log onto the bw uni cluster, all needed environments, variables etc. are correctly initialized.
-
-
-
-MobaXterms Editor uses the Windows-Format for saving files. Change to unix.
-scontrol show partition --> Command for devices available for jobs you run when running inference for the model
-sbatch run_pixtral_mirp.sh to run Slurm-Script
-
-Job-ID herausfinden: squeue -u $(whoami)
-Job abbrechen: scancel 1234567
-
-- run slurm script with changed directories in inference script for mistral
-- problems with slurm script: find correct gpu names etc.
