@@ -17,8 +17,8 @@ This repository demonstrates how to set up an account, prepare an environment, r
 1. Follow these steps to create an account at BW Uni Cluster 3.0:  https://wiki.bwhpc.de/e/Registration/bwUniCluster
 2. Download and install MobaXterm here: https://mobaxterm.mobatek.net/
 3. Connect with vpn.uni-ulm.de and type in your Uni-Ulm kiz-Account-Name and kiz-Account-Password (use Cisco Secure Client for that). You will also be asked for your OTP from Uni Ulm (You can use Google Authenticator for     that).
-4. Create a new session in MobaXterm with Session --> SSH
-   Type in the remote host: uc3.scc.kit.edu and your username (this is the username that was specified when you created the bw uni cluster account (for uni ulm it is ul_...). The port should be 22 by default, if not,         change it to 22.
+4. Create a new session in MobaXterm with Session --> SSH Tab
+   Type in the remote host: uc3.scc.kit.edu and your username (this is the username that was specified when you created the bw uni cluster account (for uni ulm it is ul_...). The port should be 22 by default, if not,         change it to 22. Click OK to create and save the session.
 5. Login with the created session in MobaXterm (SSH). Just right click the created session and left click "Execute". 
    Again you will be asked to type in another OTP (OTP --> second factor for bw uni cluster) and then your service password for the BW Uni Cluster 3.0 you set when you created the account.
    You are now in your home-directory and this first section is completed.
@@ -68,7 +68,11 @@ PY
        local_dir_use_symlinks=False,
    )
    PY
-6. The inference scripts for running models like pixtral has to be cloned. 
+6. Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can trasnfer it to your home-directory, otherwise, you should create another workspace for the data.
+   The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
+   Again type in the remote host just like in SSH: uc3.scc.kit.edu and type in your username. Use 22 as Port (should be the default setting). Click OK to create and save the session.
+   
+8. The inference scripts for running models like pixtral has to be cloned. 
 
 
 - Create a SFTP session for transfering the data to your cluster node.
