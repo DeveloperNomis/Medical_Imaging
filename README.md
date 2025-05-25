@@ -88,6 +88,21 @@ You have to change 3 main paths: One for the model, one for the data and one for
 For the model path you have to change the following lines:
 
 
+
+
+~/.bashrc.d/pixtral.sh
+# 1) Verzeichnis anlegen (falls noch nicht da)
+mkdir -p ~/.bashrc.d
+# 2) Datei anlegen und öffnen
+nano ~/.bashrc.d/pixtral.sh
+
+MobaXterms Editor uses the Windows-Format for saving files. Change to unix.
+scontrol show partition --> Command for devices available for jobs you run when running inference for the model
+sbatch run_pixtral_mirp.sh to run Slurm-Script
+
+Job-ID herausfinden: squeue -u $(whoami)
+Job abbrechen: scancel 1234567
+
 - Create a SFTP session for transfering the data to your cluster node.
 - Access token for Hugging face --> Clone Pixtral-12b model
 - Create Bash.rc for automating environemnt activation and to get into right directory
