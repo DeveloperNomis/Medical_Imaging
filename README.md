@@ -4,12 +4,12 @@ This repository demonstrates how to set up an account, prepare an environment, r
 
 ## 📋 Table of Contents
 
-1. [Account Setup](#account-setup)  
+1. [Account Setup and Login](#account-setup)  
 2. [Cluster Environment Preparation](#cluster-environment-preparation)  
-3. [Data & Directory Layout](#data--directory-layout)  
-4. [Inference Script & Slurm Submission](#inference-script--slurm-submission)  
-5. [Evaluation Script](#evaluation-script)  
-6. [Troubleshooting & Tips](#troubleshooting--tips)  
+3. [Data](#data)  
+4. [Change paths in inference-script](#change-paths--inference-script)  
+5. [Slurm Submission and starting inference with model](#Slurm-Submission)  
+6. [Automation of environment activation and variables](#automation)  
 
 
 ## 1. Account Setup and Login
@@ -75,7 +75,7 @@ PY
    Then type in the following command into the terminal: git@github.com:Wolfda95/MIRP_Benchmark_Student.git $WS_MODEL/mirp_benchmark
    You will be asked for your GitHub-Username and Password.
 
-## 3. Data & Directory Layout
+## 3. Data
 
 Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can trasnfer it to your home-directory, otherwise, you should create another workspace for the data.
 The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
