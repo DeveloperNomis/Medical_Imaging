@@ -68,11 +68,21 @@ PY
        local_dir_use_symlinks=False,
    )
    PY
-6. Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can trasnfer it to your home-directory, otherwise, you should create another workspace for the data.
-   The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
-   Again type in the remote host just like in SSH: uc3.scc.kit.edu and type in your username. Use 22 as Port (should be the default setting). Click OK to create and save the session.
    
-8. The inference scripts for running models like pixtral has to be cloned. 
+7. The repository with the inference scripts for running models like pixtral has to be cloned.
+   Therefore, you need to create an access token on github, because you need to clone the repository with SSH. Go to your profile (right corner) --> Settings --> Developer Settings (end of the page, scroll down) -->          Personal access tokens --> Tokens (classic) --> Generate new token --> Generate new token (classic)
+   Type in a Note to describe roughly the purpose for the access token. Click on the scope repo (all things under repo should be checked) and click on "Generate token" at the bottom of the page. 
+   Then type in the following command into the terminal: git@github.com:Wolfda95/MIRP_Benchmark_Student.git $WS_MODEL/mirp_benchmark
+   You will be asked for your GitHub-Username and Password. 
+
+## 3. Data & Directory Layout
+
+Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can trasnfer it to your home-directory, otherwise, you should create another workspace for the data.
+The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
+Again type in the remote host just like in SSH: uc3.scc.kit.edu and type in your username. Use 22 as Port (should be the default setting). Click OK to create and save the session.
+Then you can just drag and drop the dataset into the correct folder (for example a new directory in your home-directory with the name data).
+
+## 4. Change paths in inference-script 
 
 
 - Create a SFTP session for transfering the data to your cluster node.
