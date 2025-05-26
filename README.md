@@ -562,6 +562,7 @@ With this additional block we can create a new directory (if not already created
 And then create a file in there named pixtral.sh (for example).
 - nano ~/.bashrc.d/pixtral.sh
 Put the following code into this file:
+```bash
 #!/usr/bin/env bash
 # === Pixtral-Setup für interaktive Shells ===
 if [[ $- == *i* ]] && ws_find pixtral &> /dev/null; then
@@ -577,6 +578,6 @@ if [[ $- == *i* ]] && ws_find pixtral &> /dev/null; then
   cd "$WS_MODEL" || true
 fi
 # === Ende Pixtral-Setup ===
-
+```
 Of course, the paths need to changed accordingly to your paths. Save the file and exit.
 Now, every time you log onto the bw uni cluster, all needed environments, variables etc. are correctly initialized.
