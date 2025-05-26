@@ -1,6 +1,6 @@
 # Pipeline for setting up Mistral / Pixtral-12b on BW Uni Cluster 3.0 (Example setup)
 
-This repository demonstrates how to set up an account, prepare an environment and run inference on on a dataset with the pxitral model on the BW Uni Cluster 3.0 with a GPU.
+This repository demonstrates how to set up an account, prepare an environment and run inference on a dataset with the pxitral model on the BW Uni Cluster 3.0 with a GPU.
 
 ## 📋 Table of Contents
 
