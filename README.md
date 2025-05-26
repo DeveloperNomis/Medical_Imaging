@@ -42,7 +42,7 @@ This repository demonstrates how to set up an account, prepare an environment, r
    - pip install "vllm>=0.6.2" mistral_common>=1.4.4 pillow tqdm
 You can evaluate if all the versions and modules are correct with the following code snippet:
 ```python
-### Modul und Environment aktiviert
+# Modul und Environment aktiviert
 python - <<'PY'
 import torch, subprocess, os
 print("Torch:", torch.__version__)
