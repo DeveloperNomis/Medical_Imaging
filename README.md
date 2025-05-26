@@ -40,8 +40,9 @@ This repository demonstrates how to set up an account, prepare an environment, r
    - module load devel/cuda/12.8 (you can also first check which cuda versions are available with the following command: module avail cuda)
    - pip install torch --extra-index-url https://download.pytorch.org/whl/cu128
    - pip install "vllm>=0.6.2" mistral_common>=1.4.4 pillow tqdm
-You can evaluate if all the versions and modules are correct with the following code snippet: 
-# Modul und Environment aktiviert
+You can evaluate if all the versions and modules are correct with the following code snippet:
+```python
+### Modul und Environment aktiviert
 python - <<'PY'
 import torch, subprocess, os
 print("Torch:", torch.__version__)
@@ -51,6 +52,7 @@ if torch.cuda.is_available():
     print("GPU via nvidia-smi:")
     subprocess.run(["nvidia-smi", "-L"])
 PY
+```
 
 4. Now we prepared the environment for the model and can pull the model pixtral-12b from huggingface
    - huggingface-cli login --> You need to create an access token on Hugging Face and type in this token as a login to clone the model on the bw uni cluster.
