@@ -549,6 +549,7 @@ Of course, the directory pixtral_results has to exist in your home-directory.
 
 To automatize the whole procedure with activating the conda environment, loading the necessary modules, set environment-variables and setting the directory, we create a script that does that automatically when logging    onto your bw uni cluster account.
    - Therefore, we first need to add this code block to our .bashrc in our home-directory:
+```bash
    if [ -d ~/.bashrc.d ]; then
 	for rc in ~/.bashrc.d/*; do
 		if [ -f "$rc" ]; then
@@ -556,7 +557,7 @@ To automatize the whole procedure with activating the conda environment, loading
 		fi
 	done
 fi
-
+```
 With this additional block we can create a new directory (if not already created):
 - mkdir -p ~/.bashrc.d
 And then create a file in there named pixtral.sh (for example).
