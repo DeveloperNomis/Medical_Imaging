@@ -58,6 +58,7 @@ PY
    - huggingface-cli login --> You need to create an access token on Hugging Face and type in this token as a login to clone the model on the bw uni cluster.
    - To create an access token you go to your profile on hugging face --> Access tokens --> Create new token --> Go to the tab Read --> Type in a meaningful token name --> Create Token
 5. Load the pixtral model on the bw uni cluster with the following code:
+```python
    python - <<'PY'
    from huggingface_hub import snapshot_download
    import os, pathlib, sys
@@ -70,7 +71,7 @@ PY
        local_dir_use_symlinks=False,
    )
    PY
-   
+```
 7. The repository with the inference scripts for running models like pixtral has to be cloned.
    Therefore, you need to create an access token on github, because you need to clone the repository with SSH. Go to your profile (right corner) --> Settings --> Developer Settings (end of the page, scroll down) -->          Personal access tokens --> Tokens (classic) --> Generate new token --> Generate new token (classic)
    Type in a Note to describe roughly the purpose for the access token. Click on the scope repo (all things under repo should be checked) and click on "Generate token" at the bottom of the page. 
@@ -99,7 +100,7 @@ You have to change the following lines:
 - RESULTS_ROOT
 
 The script you can use is this one, just change the 3 lines and it should be working:
-
+```python
 """
 Automated Image Processing and Model Call Script for Medical QA Tasks with Images
 
@@ -475,6 +476,7 @@ if __name__ == "__main__":
             json.dump(results, out, indent=2)
 
         print(f"Run {run_idx} with {N} images finished in {elapsed:.1f}s.")
+```
 
 
 ## 5. Slurm Submission and starting inference with model
