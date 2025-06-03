@@ -65,7 +65,7 @@ PY
    os.environ["HF_HOME"] = os.getenv("WS_MODEL") + "/.hf_cache"
 
    snapshot_download(
-       repo_id="mistralai/Pixtral-12B-Base-2409",
+       repo_id="mistralai/Pixtral-12B-2409",
        allow_patterns=["*.safetensors","*.json","*.model"],
        local_dir=os.path.join(os.getenv("WS_MODEL"), "pixtral-12b"),
        local_dir_use_symlinks=False,
