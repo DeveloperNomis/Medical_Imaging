@@ -582,3 +582,11 @@ fi
 ```
 Of course, the paths need to changed accordingly to your paths. Save the file and exit.
 Now, every time you log onto the bw uni cluster, all needed environments, variables etc. are correctly initialized.
+
+## 7. Parallel processing of prompts
+So far, we manually changed the prompt in the inference script and every new prompt was processed on its own.
+We now would like to parallely process several prompts.The idea is to automatically read in a text file with all the prompts and the main slurm-script calls the inference-script for each prompt individually. 
+The inference script then parses the given text and replaces the prompt with this information by which the Pixtral-12B model is called.
+Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
+By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).
+Missing: Parsing for inference script (code), Slurm-Scirpt which executes several prompts parallely (code), Prompts-Text file (one quick example), Evaluation script, Visualization code.  
