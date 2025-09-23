@@ -590,3 +590,9 @@ The inference script then parses the given text and replaces the prompt with thi
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
 By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).
 Missing: Parsing for inference script (code), Slurm-Scirpt which executes several prompts parallely (code), Prompts-Text file (one quick example), Evaluation script, Visualization code.  
+
+```txt
+Prompt 1
+Prompt 2
+Prompt 3
+...
