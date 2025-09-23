@@ -597,6 +597,7 @@ Prompt 1
 Prompt 2
 Prompt 3
 ...
+```
 
 ```bash
 #!/usr/bin/env bash
