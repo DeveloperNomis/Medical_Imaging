@@ -589,10 +589,129 @@ We now would like to parallely process several prompts.The idea is to automatica
 The inference script then parses the given text and replaces the prompt with this information by which the Pixtral-12B model is called.
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
 By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).
-Missing: Parsing for inference script (code), Slurm-Scirpt which executes several prompts parallely (code), Prompts-Text file (one quick example), Evaluation script, Visualization code.  
+Missing: Parsing for inference script (code), Slurm-Scirpt which executes several prompts parallely (code), Prompts-Text file (one quick example), Evaluation script, Visualization code, command to execute slurm script.  
 
+The text file should look like this, where each prompt is in its own line:    
 ```txt
 Prompt 1
 Prompt 2
 Prompt 3
 ...
+
+```bash
+#!/usr/bin/env bash
+###############################################################################
+# pixtral_array.slurm  – 1 Prompt pro Array-Task, verarbeitet RQ1-3 (+ Marker)
+###############################################################################
+
+############################  Ressourcen  #####################################
+#SBATCH --partition=gpu_h100
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=64G
+#SBATCH --time=30:00:00
+#SBATCH -J pixtral_h100
+#SBATCH --output=slurm_log/pixtral_%A_%a.out
+#SBATCH --error=slurm_log/pixtral_%A_%a.err
+###############################################################################
+
+# ---------------------------------------------------------------------------
+# 0) Stub „conda“ unschädlich machen, *dann* strenges Bash-Profil aktivieren
+# ---------------------------------------------------------------------------
+alias conda="true"                 # vermeidet ImportError & Exit-Code≠0
+
+# ---------------------------------------------------------------------------
+# 1) Grundpfade (WS_MODEL *vor* PROMPTS_FILE setzen!)
+# ---------------------------------------------------------------------------
+export WS_MODEL=$(ws_find pixtral)   # Cluster-Helper
+
+PROMPTS_FILE="${1:-$WS_MODEL/mirp_benchmark/inference_scripts/prompts/prompts.txt}"
+export DATA_DIR="$HOME/data/MISR_Dataset"
+export RESULTS_ROOT="$WS_MODEL/pixtral-12b-finetuned/results"   # Wurzel für alle Runs
+
+mkdir -p "$RESULTS_ROOT" slurm_log
+
+# ---------------------------------------------------------------------------
+# 2) Prompt für diesen Array-Task holen
+# ---------------------------------------------------------------------------
+PROMPT_TEXT=$(sed -n "$((SLURM_ARRAY_TASK_ID+1))p" "$PROMPTS_FILE")
+[[ -z "$PROMPT_TEXT" ]] && { echo "Leere Prompt-Zeile – Task endet."; exit 0; }
+
+PROMPT_HASH=$(echo -n "$PROMPT_TEXT" | md5sum | cut -d' ' -f1)
+PROMPT_OUTDIR="$RESULTS_ROOT/$PROMPT_HASH"
+mkdir -p "$PROMPT_OUTDIR"
+echo "$PROMPT_TEXT" > "$PROMPT_OUTDIR/PROMPT.txt"
+
+# ---------------------------------------------------------------------------
+# 3) Module & Python-Umgebung
+# ---------------------------------------------------------------------------
+module load devel/miniforge/24.11.0-python-3.12
+export PATH="$WS_MODEL/conda/pixtral/bin:$PATH"
+module load devel/cuda/12.8
+
+set -euo pipefail
+
+# ---------------------------------------------------------------------------
+# 4) Temp-Datei für --prompt_file
+# ---------------------------------------------------------------------------
+TMP_PROMPT=$(mktemp /tmp/prompt_${SLURM_JOB_ID}_${SLURM_ARRAY_TASK_ID}.XXXX.txt)
+echo "$PROMPT_TEXT" > "$TMP_PROMPT"
+trap 'rm -f "$TMP_PROMPT"' EXIT      # automatische Aufräum­routine
+
+# ---------------------------------------------------------------------------
+# 5) Inferenz – Py-Script erzeugt Unterordner pro RQ & Marker
+# ---------------------------------------------------------------------------
+python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral_dynamic.py" \
+       --model_path  "$WS_MODEL/pixtral-12b-finetuned" \
+       --data_path   "$DATA_DIR" \
+       --output_root "$PROMPT_OUTDIR" \
+       --batch_size  4 \
+       --prompt_file "$TMP_PROMPT"
+
+echo "Task $SLURM_ARRAY_TASK_ID abgeschlossen – Ergebnisse unter $PROMPT_OUTDIR"
+```
+
+In general, the script looks similar to the first inference-script.  
+This script is the production-ready replacement for the earlier development job file.
+It is designed for large-scale prompt-based inference on the cluster.
+
+Key features:
+  - Runs as an array job with specific command: each array task processes exactly one prompt from a prompt file (prompts.txt in this case)
+  - Uses the SLURM environment variable SLURM_ARRAY_TASK_ID to select the correct prompt line
+  - Creates a unique hash-based output directory per prompt, and stores the prompt text alongside the results.
+  - Requests 1 H100 GPU, 8 CPUs, 64 GB RAM, up to 30 hours runtime (--partition=gpu_h100)
+  - Uses a temporary file for the prompt (--prompt_file) with automatic cleanup via trap
+  - Logs are stored separately per task:
+  	 - slurm_log/pixtral_%A_%a.out
+    - slurm_log/pixtral_%A_%a.err
+  - Loads miniforge (Python 3.12) and CUDA 12.8, avoids conda activate issues by directly exporting the env path
+  - Runs inference via
+```bash
+python .../all_experiments_mistral_dynamic.py \
+    --model_path pixtral-12b-finetuned \
+    --data_path <DATA_DIR> \
+    --output_root <PROMPT_OUTDIR> \
+    --batch_size 4 \
+    --prompt_file <TMP_PROMPT>
+```
+Differences from the old script:
+  - Old script was a single short test job (20 min limit, dev queue) with a simple check for CUDA + vLLM
+  - New script supports long runs (30h) and scales to many prompts via job arrays
+  - Old script used a fixed dataset path and single output folder, new script organizes results per prompt
+  - New script has robust error handling (set -euo pipefail, empty prompt check, trap cleanup)
+
+How to run:
+```bash
+sbatch --array=0-9 run_pixtral_mirp_all_dynamic.sh prompts.txt
+```
+This would process the first 10 prompts from prompts.txt.  
+Of course one needs to specify the correct directories and change the names of the files accordingly.  
+
+Results will be stored under:  
+```bash
+$WS_MODEL/pixtral-12b-finetuned/results/<PROMPT_HASH>/
+```
+with the corresponding PROMPT.txt saved for reproducibility.  
+
+
+
