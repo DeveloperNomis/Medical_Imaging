@@ -1177,7 +1177,8 @@ if __name__ == "__main__":
 
 As you probably already have seen, this is the second version of the python inference script for medical image QA evaluation using VLLM.  
 The new script (recommended) improves flexibility, reproducibility, and experiment organization.  
-Key Improvements in the New Script
+
+# Key Improvements in the New Script:  
   - Command-line interface with arguments:
 	--model_path, --data_path, --output_root, --prompt_file, --batch_size
 	→ No more hard-coded paths
@@ -1186,5 +1187,7 @@ Key Improvements in the New Script
   - Organized outputs: Results are stored per experiment and sub-experiment under the chosen --output_root directory
   - Multiple runs: By default, each sub-experiment is repeated 5 times to check consistency
   - Additional question handling: Uses a random QA-pair from another image to enrich the prompt format
-  - 
-  - 
+  - Note: --batch_size argument is parsed but not yet used in the inference call.  
+
+If you now execute the slurm script script with the command specified above, you get all the different results for the prompts.
+Next, we want to evaluate the results. Compute metrics from it to really compare the performance.
