@@ -1229,7 +1229,7 @@ Detailed per-run results and unsure cases are only available in the combined JSO
 
 ## Visualization Scripts
 
-The visualization script are in the directory "Visualization" in this repository. There are 5 different visualization scripts in total.  
+The visualization scripts are in the directory "Visualization" in this repository. There are 5 different visualization scripts in total.  
 These scripts generate plots and confusion matrices to better understand model performance across prompts, research questions, and datasets.
 
   - ConfusionMatrices_perDataset.py:
