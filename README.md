@@ -1191,4 +1191,38 @@ The new script (recommended) improves flexibility, reproducibility, and experime
 
 If you now execute the slurm script script with the command specified above, you get all the different results for the prompts.
 Next, we want to evaluate the results. This means we compute metrics from it to really compare the performance.
+The evaluation script can be found in the directory "Evaluation" in this repository. 
+
+### What you might need to change
+#### Base paths: 
+  - In main(): base_path = os.path.join(os.environ["WS_MODEL"], "pixtral-12b-finetuned", "results")
+  -	unsure_base = os.path.join(os.environ["WS_MODEL"], "pixtral-12b-finetuned", "unsure_cases")
+  -	If your model/results live elsewhere, adjust these paths (or set WS_MODEL accordingly)
+#### Folder names / ordering:
+  - Excel/CSV sorting prioritizes RQ1, RQ2, RQ3, AS1, AS2. Change the priority map if your naming differs.
+#### Number of runs in the summary table:
+  - The sheet reserves columns for 5 runs. If you use more/less, tweak N_RUNS = 5 in the Excel/CSV writers.
+
+### Outputs
+  - Excel: ${base_path}/Results_Images.xlsx
+  - CSV: ${base_path}/Results_Images.csv
+  - Summary JSONs in unsure_cases/...
+The CSV/Excel Files contain only the aggregated metrics (Accuracy, F1, mean/std, counts).  
+The Combined JSON files additionally include per-run details and the full list of unsure cases (unparseable answers).  
+You run this python script by just typing this command:
+```bash
+python aggregate_results.py
+```
+
+### CSV Summary Contents
+The generated Results_Images.csv provides an overview of all experiments.  
+Each row corresponds to one <RQ>/<marker>/<variant> folder and includes:  
+  - Aggregated metrics:
+    - Accuracy_Mean, Accuracy_Std
+    - F1_Mean, F1_Std
+    - subset metrics for Left/Right and Above/Below questions (mean/std)
+  - Run-level counts:
+    - correct_run1…N, incorrect_run1…N, unsure_run1…N
+This file is intended for high-level comparison across experiments.  
+Detailed per-run results and unsure cases are only available in the combined JSON files.
 
