@@ -1211,7 +1211,7 @@ The CSV/Excel Files contain only the aggregated metrics (Accuracy, F1, mean/std,
 The Combined JSON files additionally include per-run details and the full list of unsure cases (unparseable answers).  
 You run this python script by just typing this command:
 ```bash
-python aggregate_results.py
+python3 FiveRuns_1_calculate_results_image_full.py
 ```
 
 ### CSV Summary Contents
