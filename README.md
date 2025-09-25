@@ -1227,3 +1227,24 @@ Each row corresponds to one <RQ>/<marker>/<variant> folder and includes:
 This file is intended for high-level comparison across experiments.  
 Detailed per-run results and unsure cases are only available in the combined JSON files.
 
+## Visualization Scripts
+
+The visualization script are in the directory "Visualization" in this repository. There are 5 different visualization scripts in total.  
+These scripts generate plots and confusion matrices to better understand model performance across prompts, research questions, and datasets.
+
+  - ConfusionMatrices_perDataset.py:
+	Creates a separate confusion matrix per RQ (RQ1, RQ2, RQ3) for each prompt folder.
+  - Confusion_Matrices.py:
+	Creates one overall confusion matrix per prompt folder (aggregating across RQs).
+  - Visualizing_Prompt_Measures.py:
+	Use for a single dataset (e.g. RQ2_dots).
+	Compares prompts within that dataset across 5 runs (line plots per run, bar plots for mean ± std accuracy/F1, stacked outcomes).
+  - Visualizing_Prompt_Measures_CompleteDataset_Split.py:
+	Use when you want results split by research question (RQ1–RQ3).
+	Creates separate plots for each RQ, showing mean ± std accuracy/F1 per prompt.
+  - Visualizing_Prompt_Measures_CompleteDataset.py:
+    Use when you want to aggregate across the different RQs.  
+	Creates overall plots per prompt folder (aggregating across RQs), including accuracy per run, mean ± std accuracy/F1, and stacked outcome distributions.
+
+The results as csv-files for the best prompts and the according plots can be found in this repository:  
+https://github.com/DeveloperNomis/Medical_Imaging_Results  
