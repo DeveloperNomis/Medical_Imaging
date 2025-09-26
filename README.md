@@ -12,7 +12,8 @@ It also includes scripts for structured parallel experiment execution via SLURM 
 5. [Slurm Submission and starting inference with model](#Slurm-Submission)  
 6. [Automation of environment activation and variables](#automation)
 7. [Parallel processing of prompts](#parallel-processing)
-
+8. [Evaluation](#evaluation)
+9. [Visualization scripts](#visualization-scripts)
 
 ## 1. Account Setup and Login
 
