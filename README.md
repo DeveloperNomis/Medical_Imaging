@@ -1,4 +1,4 @@
-# Pipeline for setup, inference, evaluation and visualization with Mistral / Pixtral-12b on BW Uni Cluster 3.0
+# Pipeline for setup, inference, evaluation and visualization with Mistral / Pixtral-12B on BW Uni Cluster 3.0
 
 This repository demonstrates how to set up an account, prepare an environment and run inference on a dataset with the pixtral model on the BW Uni Cluster 3.0 with a GPU.  
 It also includes scripts for structured parallel experiment execution with prompts via SLURM array jobs and for aggregating/evaluating results.
