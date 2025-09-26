@@ -1191,6 +1191,8 @@ The new script (recommended) improves flexibility, reproducibility, and experime
   - Note: --batch_size argument is parsed but not yet used in the inference call.  
 
 If you now execute the slurm script script with the command specified above, you get all the different results for the prompts.
+
+## Evaluation
 Next, we want to evaluate the results. This means we compute metrics from it to really compare the performance.
 The evaluation script can be found in the directory "Evaluation" in this repository. 
 
