@@ -8,7 +8,7 @@ It also includes scripts for structured parallel experiment execution via SLURM 
 1. [Account Setup and Login](#1-account-setup-and-login)  
 2. [Cluster Environment Preparation](#2-cluster-environment-preparation)  
 3. [Data](#3-data)  
-4. [Change paths in inference-script](#4-change-paths--inference-script)  
+4. [Change paths in inference-script](#4-change-paths-in-inference-script)  
 5. [Slurm Submission and starting inference with model](#5-Slurm-Submission-and-starting-inference-with-model)  
 6. [Automation of environment activation and variables](#6-automation-of-environment-activation-and-variables)
 7. [Parallel processing of prompts](#7-parallel-processing-of-prompts)
