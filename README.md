@@ -1210,6 +1210,17 @@ The evaluation script can be found in the directory "Evaluation" in this reposit
 #### Number of runs in the summary table:
   - The sheet reserves columns for 5 runs. If you use more/less, tweak N_RUNS = 5 in the Excel/CSV writers.
 
+**Note:** The evaluation script assumes results are stored under  
+`$WS_MODEL/pixtral-12b-finetuned/results`.  
+
+If you used the initial run script (`run_pixtral_mirp.sh`), your results may instead be under  
+`$WS_MODEL/pixtral-12b/results`. In that case, either  
+
+- change the `RESULTS_DIR` in your run script to  
+  `$WS_MODEL/pixtral-12b-finetuned/results`, or  
+- update the `base_path` and `unsure_base` variables in the evaluation script to match.
+
+
 ### Outputs
   - Excel: ${base_path}/Results_Images.xlsx
   - CSV: ${base_path}/Results_Images.csv
