@@ -5,7 +5,7 @@ It also includes scripts for structured parallel experiment execution via SLURM 
 
 ## 📋 Table of Contents
 
-1. [Account Setup and Login](#account-setup)  
+1. [Account Setup and Login](#1-account-setup-and-login)  
 2. [Cluster Environment Preparation](#cluster-environment-preparation)  
 3. [Data](#data)  
 4. [Change paths in inference-script](#change-paths--inference-script)  
@@ -591,8 +591,7 @@ So far, we manually changed the prompt in the inference script and every new pro
 We now would like to parallely process several prompts.The idea is to automatically read in a text file with all the prompts and the main slurm-script calls the inference-script for each prompt individually. 
 The inference script then parses the given text and replaces the prompt with this information by which the Pixtral-12B model is called.
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
-By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).
-Missing: Parsing for inference script (code), Slurm-Scirpt which executes several prompts parallely (code), Prompts-Text file (one quick example), Evaluation script, Visualization code, command to execute slurm script.  
+By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).  
 
 The text file should look like this, where each prompt is in its own line:    
 ```txt
@@ -602,6 +601,7 @@ Prompt 3
 ...
 ```
 
+This is the main slurm-script which processes the prompts in parallel:  
 ```bash
 #!/usr/bin/env bash
 ###############################################################################
@@ -675,7 +675,7 @@ python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral_dynam
 echo "Task $SLURM_ARRAY_TASK_ID abgeschlossen – Ergebnisse unter $PROMPT_OUTDIR"
 ```
 
-In general, the script looks similar to the first inference-script.  
+In general, the script looks similar to the first slurm-script.  
 This script is the production-ready replacement for the earlier development job file.
 It is designed for large-scale prompt-based inference on the cluster.
 
@@ -717,6 +717,8 @@ $WS_MODEL/pixtral-12b-finetuned/results/<PROMPT_HASH>/
 ```
 with the corresponding PROMPT.txt saved for reproducibility.  
 
+
+The slurm script calls the inference script at the end which executes the model for each prompt. Because of this pipeline, the inference script needs to parse the corresponding variables which are used in the slurm script:  
 ```python
 
 """
