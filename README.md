@@ -10,7 +10,7 @@ This setup can serve as a template and can be adapted to other environments if n
 2. [Cluster Environment Preparation](#2-cluster-environment-preparation)  
 3. [Data](#3-data)  
 4. [Change paths in inference-script](#4-change-paths-in-inference-script)  
-5. [Slurm Submission and starting inference with model](#5-Slurm-Submission-and-starting-inference-with-model)  
+5. [SLURM Submission and starting inference with model](#5-slurm-submission-and-starting-inference-with-model)  
 6. [Automation of environment activation and variables](#6-automation-of-environment-activation-and-variables)
 7. [Parallel processing of prompts](#7-parallel-processing-of-prompts)
 8. [Evaluation](#8-evaluation)
@@ -29,15 +29,15 @@ This setup can serve as a template and can be adapted to other environments if n
 
 ## 2. Cluster Environment Preparation
 
-1. The first step to be able to run a model on the bw uni cluster is to create a workspace, where you can store the model and your data. If you didn't yet register a worskapce use the following command in the terminal:
-   - ws_register $HOME/workspaces
+1. The first step to be able to run a model on the bw uni cluster is to create a workspace, where you can store the model and your data. If you didn't yet register a workspace use the following command in the terminal:
+   - `ws_register $HOME/workspaces`
 2. Next, you can allocate memory for your workspace with:
-   - ws_allocate ProjectName 200 (replace ProjectName with your specific workspace/project name)
+   - `ws_allocate ProjectName 200` (replace ProjectName with your specific workspace/project name)
    - The number specifies the allocation size (200 means 200 GB) --> Change according to your needs
-   - export WS_MODEL=$(ws_find ProjectName) --> (in our case ProjectName is pixtral)
+   - `export WS_MODEL=$(ws_find ProjectName)` --> (in our case ProjectName is pixtral)
 3. We need to prepare the module and conda-environment (the following steps are used to load the pixtral model from mistral on the bw uni cluster, if you have another model, just adjust the names and paths):
    We use the following commands in the specified order:
-   -  module load devel/miniforge/24.11.0-python-3.12
+   -  `module load devel/miniforge/24.11.0-python-3.12`
    -  source $(conda info --base)/etc/profile.d/conda.sh (load hook for conda)
    -  conda create -p $WS_MODEL/conda/pixtral python=3.10 -y
    -  conda activate $WS_MODEL/conda/pixtral
@@ -84,7 +84,7 @@ PY
 
 ## 3. Data
 
-Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can trasnfer it to your home-directory, otherwise, you should create another workspace for the data.
+Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can transfer it to your home-directory, otherwise, you should create another workspace for the data.
 The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
 Again type in the remote host just like in SSH: uc3.scc.kit.edu and type in your username. Use 22 as Port (should be the default setting). Click OK to create and save the session.
 Then you can just drag and drop the dataset into the correct folder (for example a new directory in your home-directory with the name data).
@@ -97,7 +97,7 @@ alex_med-prompt
 ## 4. Change paths in inference-script 
 Go to your inference script, with which you want to run the model. It should be in mirp_benchmark/inference_scripts/ (You can open any script with the MobaTextEditor). Just make sure to change the format to unix: Format in the above bar --> Unix and if necessary the Encoding to UTF-8 if you use umlauts in comments or something similar (Encoding in the above bar --> UTF-8 (default))
 Here it is done with the all_experiments_mistral.py and the above described dataset-structure (in section Data & Directory Layout). 
-You have to change 3 main paths: One for the model, one for the data and one for the output of the results (according to your file structure) if you use the same file stucture for the data (Otherwise you have to further adjust the script, the original script uses 3 subfolders for example).
+You have to change 3 main paths: One for the model, one for the data and one for the output of the results (according to your file structure) if you use the same file structure for the data (Otherwise you have to further adjust the script, the original script uses 3 subfolders for example).
 You have to change the following lines:
 - model_dir
 - dataset_dir
@@ -483,8 +483,8 @@ if __name__ == "__main__":
 ```
 
 
-## 5. Slurm Submission and starting inference with model
-To start a run with our model on the dataset, we need to first create a slurm script, that automatically initializes the environment, references all paths etc.
+## 5. SLURM Submission and starting inference with model
+To start a run with our model on the dataset, we need to first create a SLURM script, that automatically initializes the environment, references all paths etc.
 First type into the terminal: nano run_pixtral_mirp.sh (for example, you can of course choose another name).
 Use this code as a basis and change it according to your paths and need for devices:
 
@@ -529,23 +529,23 @@ python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral.py" \
 
 If you want to use a different device, you can check the available devices with the following command in the terminal in your workspace:
 - scontrol show partition
-This command lists the devices available for jobs you run (with the above slurm script) when running inference for the model.
+This command lists the devices available for jobs you run (with the above SLURM script) when running inference for the model.
 But you have to be careful, for different devices, not only the line with "--partition" changes, but you have to adjust some other lines accordingly.
 
-To finally run the slurm script, type in the following command:
+To finally run the SLURM script, type in the following command:
 - sbatch run_pixtral_mirp.sh
 You can then list all running jobs and their ids:
 - squeue -u $(whoami)
 And also cancel a running job:
 - scancel 1234567 (Of course you have to change the number to the specific job id you want to cancel)
 
-This setup runs the inference script for the pixtral model and a specific dataset on the bw uni cluster.
+This setup runs the inference script for the PIXTRAL model and a specific dataset on the bw uni cluster.
 Just be careful that all paths exist that you refer to, then this setup should be working fine.
 And remember, that you need to extend the time for the workspace if you need it longer, for example:
 - ws resize pixtral --lifetime 30 (extends the workspace time for 30 days)
 You can also check the remaining time with:
 - ws info pixtral
-If you want to have the results from your pixtral model permanently, you can copy them into your home directory:
+If you want to have the results from your PIXTRAL model permanently, you can copy them into your home directory:
 - cp -r "$WS_MODEL/pixtral-12b/results" "$HOME/pixtral_results"
 Of course, the directory pixtral_results has to exist in your home-directory.
 
@@ -589,8 +589,8 @@ Now, every time you log onto the bw uni cluster, all needed environments, variab
 
 ## 7. Parallel processing of prompts
 So far, we manually changed the prompt in the inference script and every new prompt was processed on its own.
-We now would like to parallely process several prompts.The idea is to automatically read in a text file with all the prompts and the main slurm-script calls the inference-script for each prompt individually. 
-The inference script then parses the given text and replaces the prompt with this information by which the Pixtral-12B model is called.
+We now would like to parallely process several prompts.The idea is to automatically read in a text file with all the prompts and the main SLURM script calls the inference script for each prompt individually. 
+The inference script then parses the given text and replaces the prompt with this information by which the PIXTRAL-12B model is called.
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
 By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).  
 
@@ -602,7 +602,7 @@ Prompt 3
 ...
 ```
 
-This is the main slurm-script which processes the prompts in parallel:  
+This is the main SLURM script which processes the prompts in parallel:  
 ```bash
 #!/usr/bin/env bash
 ###############################################################################
@@ -676,7 +676,7 @@ python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral_dynam
 echo "Task $SLURM_ARRAY_TASK_ID abgeschlossen – Ergebnisse unter $PROMPT_OUTDIR"
 ```
 
-In general, the script looks similar to the first slurm-script.  
+In general, the script looks similar to the first SLURM script.  
 This script is the production-ready replacement for the earlier development job file.
 It is designed for large-scale prompt-based inference on the cluster.
 
@@ -719,7 +719,7 @@ $WS_MODEL/pixtral-12b-finetuned/results/<PROMPT_HASH>/
 with the corresponding PROMPT.txt saved for reproducibility.  
 
 
-The slurm script calls the inference script at the end which executes the model for each prompt. Because of this pipeline, the inference script needs to parse the corresponding variables which are used in the slurm script:  
+The SLURM script calls the inference script at the end which executes the model for each prompt. Because of this pipeline, the inference script needs to parse the corresponding variables which are used in the slurm script:  
 ```python
 
 """
@@ -1194,7 +1194,7 @@ The new script (recommended) improves flexibility, reproducibility, and experime
   - Additional question handling: Uses a random QA-pair from another image to enrich the prompt format
   - Note: --batch_size argument is parsed but not yet used in the inference call.  
 
-If you now execute the slurm script script with the command specified above, you get all the different results for the prompts.
+If you now execute the SLURM script script with the command specified above, you get all the different results for the prompts.
 
 ## 8. Evaluation
 Next, we want to evaluate the results. This means we compute metrics from it to really compare the performance.
