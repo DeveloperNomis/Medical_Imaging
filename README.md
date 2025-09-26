@@ -35,7 +35,7 @@ This setup can serve as a template and can be adapted to other environments if n
    - `ws_allocate ProjectName 200` (replace ProjectName with your specific workspace/project name)
    - The number specifies the allocation size (200 means 200 GB) --> Change according to your needs
    - `export WS_MODEL=$(ws_find ProjectName)` --> (in our case ProjectName is pixtral)
-3. We need to prepare the module and conda-environment (the following steps are used to load the pixtral model from mistral on the bw uni cluster, if you have another model, just adjust the names and paths):
+3. We need to prepare the module and conda-environment (the following steps are used to load the Pixtral-12B model from mistral on the bw uni cluster, if you have another model, just adjust the names and paths):
    We use the following commands in the specified order:
    -  `module load devel/miniforge/24.11.0-python-3.12`
    Although Miniforge (Python 3.12) is loaded as a base module, the Conda environment created with Python 3.10 is used once activated. The PATH export ensures that the Conda Python takes precedence. 
@@ -77,7 +77,7 @@ PY
    )
    PY
 ```
-7. The repository with the inference scripts for running models like pixtral has to be cloned.
+6. The repository with the inference scripts for running models like pixtral has to be cloned.
    Therefore, you need to create an access token on github, because you need to clone the repository with SSH. Go to your profile (right corner) --> Settings --> Developer Settings (end of the page, scroll down) --> Personal access tokens --> Tokens (classic) --> Generate new token --> Generate new token (classic)
    Type in a Note to describe roughly the purpose for the access token. Click on the scope repo (all things under repo should be checked) and click on "Generate token" at the bottom of the page. 
    Then type in the following command into the terminal: `git@github.com:Wolfda95/MIRP_Benchmark_Student.git $WS_MODEL/mirp_benchmark`
@@ -521,11 +521,7 @@ print("CUDA available:", torch.cuda.is_available())
 PY
 
 ## 4) Inferenz ---------------------------------------------------------
-python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral.py" \
-       --model_path "$WS_MODEL/pixtral-12b" \
-       --data_path  "$DATA_DIR/images" \
-       --output_dir "$RESULTS_DIR" \
-       --batch_size 4
+python "$WS_MODEL/mirp_benchmark/inference_scripts/all_experiments_mistral.py"
 ```
 
 If you want to use a different device, you can check the available devices with the following command in the terminal in your workspace:
@@ -540,13 +536,13 @@ You can then list all running jobs and their ids:
 And also cancel a running job:
   - `scancel 1234567` (Of course you have to change the number to the specific job id you want to cancel)
 
-This setup runs the inference script for the PIXTRAL model and a specific dataset on the bw uni cluster.
+This setup runs the inference script for the Pixtral-12B model and a specific dataset on the bw uni cluster.
 Just be careful that all paths exist that you refer to, then this setup should be working fine.
 And remember, that you need to extend the time for the workspace if you need it longer, for example:
   - `ws resize pixtral --lifetime 30` (extends the workspace time for 30 days)
 You can also check the remaining time with:
   - `ws info pixtral`
-If you want to have the results from your PIXTRAL model permanently, you can copy them into your home directory:
+If you want to have the results from your Pixtral-12B model permanently, you can copy them into your home directory:
   - `cp -r "$WS_MODEL/pixtral-12b/results" "$HOME/pixtral_results"`
 Of course, the directory pixtral_results has to exist in your home-directory.
 
@@ -591,7 +587,7 @@ Now, every time you log onto the bw uni cluster, all needed environments, variab
 ## 7. Parallel processing of prompts
 So far, we manually changed the prompt in the inference script and every new prompt was processed on its own.
 We now would like to process several prompts in parallel. The idea is to automatically read in a text file with all the prompts and the main SLURM script calls the inference script for each prompt individually. 
-The inference script then parses the given text and replaces the prompt with this information by which the PIXTRAL-12B model is called.
+The inference script then parses the given text and replaces the prompt with this information by which the Pixtral-12B model is called.
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
 By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).  
 
@@ -1195,7 +1191,7 @@ The new script (recommended) improves flexibility, reproducibility, and experime
   - Additional question handling: Uses a random QA-pair from another image to enrich the prompt format
   - Note: --batch_size argument is parsed but not yet used in the inference call. Adjust it in the code if you need true batching.
 
-If you now execute the SLURM script script with the command specified above, you get all the different results for the prompts.
+If you now execute the SLURM script with the command specified above, you get all the different results for the prompts.
 
 ## 8. Evaluation
 Next, we want to evaluate the results. This means we compute metrics from it to really compare the performance.
