@@ -6,14 +6,14 @@ It also includes scripts for structured parallel experiment execution via SLURM 
 ## 📋 Table of Contents
 
 1. [Account Setup and Login](#1-account-setup-and-login)  
-2. [Cluster Environment Preparation](#cluster-environment-preparation)  
-3. [Data](#data)  
-4. [Change paths in inference-script](#change-paths--inference-script)  
-5. [Slurm Submission and starting inference with model](#Slurm-Submission)  
-6. [Automation of environment activation and variables](#automation)
-7. [Parallel processing of prompts](#parallel-processing)
-8. [Evaluation](#evaluation)
-9. [Visualization scripts](#visualization-scripts)
+2. [Cluster Environment Preparation](#2-cluster-environment-preparation)  
+3. [Data](#3-data)  
+4. [Change paths in inference-script](#4-change-paths--inference-script)  
+5. [Slurm Submission and starting inference with model](#5-Slurm-Submission-and-starting-inference-with-model)  
+6. [Automation of environment activation and variables](#6-automation-of-environment-activation-and-variables)
+7. [Parallel processing of prompts](#7-parallel-processing-of-prompts)
+8. [Evaluation](#8-evaluation)
+9. [Visualization scripts](#9-visualization-scripts)
 
 ## 1. Account Setup and Login
 
