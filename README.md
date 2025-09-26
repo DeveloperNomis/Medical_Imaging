@@ -1,7 +1,7 @@
 # Pipeline for setup, inference, evaluation and visualization with Mistral / Pixtral-12B on BW Uni Cluster 3.0
 
 This repository demonstrates how to set up an account, prepare an environment and run inference on a dataset with the pixtral model on the BW Uni Cluster 3.0 with a GPU.  
-It also includes scripts for structured parallel experiment execution with prompts via SLURM array jobs and for aggregating/evaluating results.
+It also includes scripts for structured parallel experiment execution via prompt-based SLURM array jobs and for aggregating/evaluating results.
 This setup can serve as a template and can be adapted to other environments if needed.
 
 ## 📋 Table of Contents
@@ -10,11 +10,11 @@ This setup can serve as a template and can be adapted to other environments if n
 2. [Cluster Environment Preparation](#2-cluster-environment-preparation)  
 3. [Data](#3-data)  
 4. [Change paths in inference-script](#4-change-paths-in-inference-script)  
-5. [SLURM Submission and starting inference with model](#5-slurm-submission-and-starting-inference-with-model)  
+5. [SLURM Submission and Starting Inference with the Model](#5-slurm-submission-and-starting-inference-with-model)  
 6. [Automation of environment activation and variables](#6-automation-of-environment-activation-and-variables)
 7. [Parallel processing of prompts](#7-parallel-processing-of-prompts)
 8. [Evaluation](#8-evaluation)
-9. [Visualization scripts](#9-visualization-scripts)
+9. [Visualization Scripts](#9-visualization-scripts)
 
 ## 1. Account Setup and Login
 
@@ -37,13 +37,13 @@ This setup can serve as a template and can be adapted to other environments if n
    - `export WS_MODEL=$(ws_find ProjectName)` --> (in our case ProjectName is pixtral)
 3. We need to prepare the module and conda-environment (the following steps are used to load the pixtral model from mistral on the bw uni cluster, if you have another model, just adjust the names and paths):
    We use the following commands in the specified order:
-   -  `module load devel/miniforge/24.11.0-python-3.12`
-   -  source $(conda info --base)/etc/profile.d/conda.sh (load hook for conda)
-   -  conda create -p $WS_MODEL/conda/pixtral python=3.10 -y
-   -  conda activate $WS_MODEL/conda/pixtral
-   - module load devel/cuda/12.8 (you can also first check which cuda versions are available with the following command: module avail cuda)
-   - pip install torch --extra-index-url https://download.pytorch.org/whl/cu128
-   - pip install "vllm>=0.6.2" mistral_common>=1.4.4 pillow tqdm
+   -  `module load devel/miniforge/24.11.0-python-3.12` Although Miniforge (Python 3.12) is loaded as a base module, the Conda environment created with Python 3.10 is used once activated. The PATH export ensures that the Conda Python takes precedence.
+   -  `source $(conda info --base)/etc/profile.d/conda.sh` (load hook for conda)
+   -  `conda create -p $WS_MODEL/conda/pixtral python=3.10 -y`
+   -  `conda activate $WS_MODEL/conda/pixtral`
+   - `module load devel/cuda/12.8` (you can also first check which cuda versions are available with the following command: `module avail cuda`)
+   - `pip install torch --extra-index-url https://download.pytorch.org/whl/cu128`
+   - `pip install "vllm>=0.6.2" mistral_common>=1.4.4 pillow tqdm`
 You can evaluate if all the versions and modules are correct with the following code snippet:
 ```python
 # Activated module and environment
@@ -58,9 +58,9 @@ if torch.cuda.is_available():
 PY
 ```
 
-4. Now we prepared the environment for the model and can pull the model pixtral-12b from huggingface
-   - huggingface-cli login --> You need to create an access token on Hugging Face and type in this token as a login to clone the model on the bw uni cluster.
-   - To create an access token you go to your profile on hugging face --> Access tokens --> Create new token --> Go to the tab Read --> Type in a meaningful token name --> Create Token
+4. Now we prepared the environment for the model and can pull the model pixtral-12b from huggingface.
+   - `huggingface-cli login` --> You need to create an **access token with Read scope** on Hugging Face and type in this token as a login to clone the model on the bw uni cluster.
+   - To create an access token you go to your profile on Hugging Face --> Access tokens --> Create new token --> select **Read** as scope --> Type in a meaningful token name --> Create Token
 5. Load the pixtral model on the bw uni cluster with the following code:
 ```python
    python - <<'PY'
@@ -77,15 +77,15 @@ PY
    PY
 ```
 7. The repository with the inference scripts for running models like pixtral has to be cloned.
-   Therefore, you need to create an access token on github, because you need to clone the repository with SSH. Go to your profile (right corner) --> Settings --> Developer Settings (end of the page, scroll down) -->          Personal access tokens --> Tokens (classic) --> Generate new token --> Generate new token (classic)
+   Therefore, you need to create an access token on github, because you need to clone the repository with SSH. Go to your profile (right corner) --> Settings --> Developer Settings (end of the page, scroll down) --> Personal access tokens --> Tokens (classic) --> Generate new token --> Generate new token (classic)
    Type in a Note to describe roughly the purpose for the access token. Click on the scope repo (all things under repo should be checked) and click on "Generate token" at the bottom of the page. 
-   Then type in the following command into the terminal: git@github.com:Wolfda95/MIRP_Benchmark_Student.git $WS_MODEL/mirp_benchmark
+   Then type in the following command into the terminal: `git@github.com:Wolfda95/MIRP_Benchmark_Student.git $WS_MODEL/mirp_benchmark`
    You will be asked for your GitHub-Username and Password.
 
 ## 3. Data
 
 Next, we load the custom data onto the bw uni cluster. If your data is relatively small, you can transfer it to your home-directory, otherwise, you should create another workspace for the data.
-The most easy way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
+The easiest way to transfer the local data onto the bw uni cluster is to create a SFTP session in MobaXterm. New Session with right click in the session window --> SFTP Tab
 Again type in the remote host just like in SSH: uc3.scc.kit.edu and type in your username. Use 22 as Port (should be the default setting). Click OK to create and save the session.
 Then you can just drag and drop the dataset into the correct folder (for example a new directory in your home-directory with the name data).
 The used dataset has the following file structure:
@@ -99,9 +99,9 @@ Go to your inference script, with which you want to run the model. It should be 
 Here it is done with the all_experiments_mistral.py and the above described dataset-structure (in section Data & Directory Layout). 
 You have to change 3 main paths: One for the model, one for the data and one for the output of the results (according to your file structure) if you use the same file structure for the data (Otherwise you have to further adjust the script, the original script uses 3 subfolders for example).
 You have to change the following lines:
-- model_dir
-- dataset_dir
-- RESULTS_ROOT
+- `model_dir`
+- `dataset_dir`
+- `RESULTS_ROOT`
 
 The script you can use is this one, just change the 3 lines and it should be working:
 ```python
@@ -483,9 +483,9 @@ if __name__ == "__main__":
 ```
 
 
-## 5. SLURM Submission and starting inference with model
+## 5. SLURM Submission and Starting Inference with the Model
 To start a run with our model on the dataset, we need to first create a SLURM script, that automatically initializes the environment, references all paths etc.
-First type into the terminal: nano run_pixtral_mirp.sh (for example, you can of course choose another name).
+First type into the terminal: `nano run_pixtral_mirp.sh` (for example, you can of course choose another name).
 Use this code as a basis and change it according to your paths and need for devices:
 
 ```bash
@@ -533,20 +533,20 @@ This command lists the devices available for jobs you run (with the above SLURM 
 But you have to be careful, for different devices, not only the line with "--partition" changes, but you have to adjust some other lines accordingly.
 
 To finally run the SLURM script, type in the following command:
-- sbatch run_pixtral_mirp.sh
+  - `sbatch run_pixtral_mirp.sh`
 You can then list all running jobs and their ids:
-- squeue -u $(whoami)
+  - `squeue -u $(whoami)`
 And also cancel a running job:
-- scancel 1234567 (Of course you have to change the number to the specific job id you want to cancel)
+  - `scancel 1234567` (Of course you have to change the number to the specific job id you want to cancel)
 
 This setup runs the inference script for the PIXTRAL model and a specific dataset on the bw uni cluster.
 Just be careful that all paths exist that you refer to, then this setup should be working fine.
 And remember, that you need to extend the time for the workspace if you need it longer, for example:
-- ws resize pixtral --lifetime 30 (extends the workspace time for 30 days)
+  - `ws resize pixtral --lifetime 30` (extends the workspace time for 30 days)
 You can also check the remaining time with:
-- ws info pixtral
+  - `ws info pixtral`
 If you want to have the results from your PIXTRAL model permanently, you can copy them into your home directory:
-- cp -r "$WS_MODEL/pixtral-12b/results" "$HOME/pixtral_results"
+  - `cp -r "$WS_MODEL/pixtral-12b/results" "$HOME/pixtral_results"`
 Of course, the directory pixtral_results has to exist in your home-directory.
 
 ## 6. Automation of environment activation and variables
@@ -563,9 +563,9 @@ To automatize the whole procedure with activating the conda environment, loading
 fi
 ```
 With this additional block we can create a new directory (if not already created):
-- mkdir -p ~/.bashrc.d
+  - `mkdir -p ~/.bashrc.d`
 And then create a file in there named pixtral.sh (for example).
-- nano ~/.bashrc.d/pixtral.sh
+  - `nano ~/.bashrc.d/pixtral.sh`
 Put the following code into this file:
 ```bash
 #!/usr/bin/env bash
@@ -606,7 +606,7 @@ This is the main SLURM script which processes the prompts in parallel:
 ```bash
 #!/usr/bin/env bash
 ###############################################################################
-# pixtral_array.slurm  – 1 Prompt pro Array-Task, verarbeitet RQ1-3 (+ Marker)
+# run_pixtral_mirp_all_dynamic.sh  – 1 Prompt pro Array-Task, verarbeitet RQ1-3 (+ Marker)
 ###############################################################################
 
 ############################  Ressourcen  #####################################
@@ -1192,7 +1192,7 @@ The new script (recommended) improves flexibility, reproducibility, and experime
   - Organized outputs: Results are stored per experiment and sub-experiment under the chosen --output_root directory
   - Multiple runs: By default, each sub-experiment is repeated 5 times to check consistency
   - Additional question handling: Uses a random QA-pair from another image to enrich the prompt format
-  - Note: --batch_size argument is parsed but not yet used in the inference call.  
+  - Note: --batch_size argument is parsed but not yet used in the inference call. Adjust it in the code if you need true batching.
 
 If you now execute the SLURM script script with the command specified above, you get all the different results for the prompts.
 
