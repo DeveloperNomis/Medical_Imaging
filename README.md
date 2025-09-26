@@ -1,6 +1,6 @@
 # Pipeline for setup, inference, evaluation and visualization with Mistral / Pixtral-12B on BW Uni Cluster 3.0
 
-This repository demonstrates how to set up an account, prepare an environment and run inference on a dataset with the pixtral model on the BW Uni Cluster 3.0 with a GPU.  
+This repository demonstrates how to set up an account, prepare an environment and run inference on a dataset with the Pixtral-12B model on the BW Uni Cluster 3.0 with a GPU.  
 It also includes scripts for structured parallel experiment execution via prompt-based SLURM array jobs and for aggregating/evaluating results.
 This setup can serve as a template and can be adapted to other environments if needed.
 
@@ -37,7 +37,8 @@ This setup can serve as a template and can be adapted to other environments if n
    - `export WS_MODEL=$(ws_find ProjectName)` --> (in our case ProjectName is pixtral)
 3. We need to prepare the module and conda-environment (the following steps are used to load the pixtral model from mistral on the bw uni cluster, if you have another model, just adjust the names and paths):
    We use the following commands in the specified order:
-   -  `module load devel/miniforge/24.11.0-python-3.12` Although Miniforge (Python 3.12) is loaded as a base module, the Conda environment created with Python 3.10 is used once activated. The PATH export ensures that the Conda Python takes precedence.
+   -  `module load devel/miniforge/24.11.0-python-3.12`
+   Although Miniforge (Python 3.12) is loaded as a base module, the Conda environment created with Python 3.10 is used once activated. The PATH export ensures that the Conda Python takes precedence. 
    -  `source $(conda info --base)/etc/profile.d/conda.sh` (load hook for conda)
    -  `conda create -p $WS_MODEL/conda/pixtral python=3.10 -y`
    -  `conda activate $WS_MODEL/conda/pixtral`
@@ -45,7 +46,7 @@ This setup can serve as a template and can be adapted to other environments if n
    - `pip install torch --extra-index-url https://download.pytorch.org/whl/cu128`
    - `pip install "vllm>=0.6.2" mistral_common>=1.4.4 pillow tqdm`
 You can evaluate if all the versions and modules are correct with the following code snippet:
-```python
+```bash
 # Activated module and environment
 python - <<'PY'
 import torch, subprocess, os
@@ -58,11 +59,11 @@ if torch.cuda.is_available():
 PY
 ```
 
-4. Now we prepared the environment for the model and can pull the model pixtral-12b from huggingface.
+4. Now we prepared the environment for the model and can pull the model Pixtral-12B from huggingface.
    - `huggingface-cli login` --> You need to create an **access token with Read scope** on Hugging Face and type in this token as a login to clone the model on the bw uni cluster.
    - To create an access token you go to your profile on Hugging Face --> Access tokens --> Create new token --> select **Read** as scope --> Type in a meaningful token name --> Create Token
 5. Load the pixtral model on the bw uni cluster with the following code:
-```python
+```bash
    python - <<'PY'
    from huggingface_hub import snapshot_download
    import os, pathlib, sys
@@ -92,7 +93,7 @@ The used dataset has the following file structure:
 alex_med-prompt
 -->   images
          --> individual PNG-images
--->   question-answers.json
+-->   qa.json
 
 ## 4. Change paths in inference-script 
 Go to your inference script, with which you want to run the model. It should be in mirp_benchmark/inference_scripts/ (You can open any script with the MobaTextEditor). Just make sure to change the format to unix: Format in the above bar --> Unix and if necessary the Encoding to UTF-8 if you use umlauts in comments or something similar (Encoding in the above bar --> UTF-8 (default))
@@ -589,7 +590,7 @@ Now, every time you log onto the bw uni cluster, all needed environments, variab
 
 ## 7. Parallel processing of prompts
 So far, we manually changed the prompt in the inference script and every new prompt was processed on its own.
-We now would like to parallely process several prompts.The idea is to automatically read in a text file with all the prompts and the main SLURM script calls the inference script for each prompt individually. 
+We now would like to process several prompts in parallel. The idea is to automatically read in a text file with all the prompts and the main SLURM script calls the inference script for each prompt individually. 
 The inference script then parses the given text and replaces the prompt with this information by which the PIXTRAL-12B model is called.
 Then we have multiple parallel jobs which create a number of result directories. These result directories are saved by a unique hash id. 
 By calling an evaluation script, one can derive metrics from the results and visualize them in plots (we get to this again later).  
@@ -602,7 +603,7 @@ Prompt 3
 ...
 ```
 
-This is the main SLURM script which processes the prompts in parallel:  
+This is the main SLURM script (`run_pixtral_mirp_all_dynamic.sh`) which processes the prompts in parallel:  
 ```bash
 #!/usr/bin/env bash
 ###############################################################################
