@@ -1192,7 +1192,7 @@ The new script (recommended) improves flexibility, reproducibility, and experime
 
 If you now execute the slurm script script with the command specified above, you get all the different results for the prompts.
 
-## Evaluation
+## 8. Evaluation
 Next, we want to evaluate the results. This means we compute metrics from it to really compare the performance.
 The evaluation script can be found in the directory "Evaluation" in this repository. 
 
@@ -1229,7 +1229,7 @@ Each row corresponds to one <RQ>/<marker>/<variant> folder and includes:
 This file is intended for high-level comparison across experiments.  
 Detailed per-run results and unsure cases are only available in the combined JSON files.
 
-## Visualization Scripts
+## 9. Visualization Scripts
 
 The visualization scripts are in the directory "Visualization" in this repository. There are 5 different visualization scripts in total.  
 These scripts generate plots and confusion matrices to better understand model performance across prompts, research questions, and datasets.
